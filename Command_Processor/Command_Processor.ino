@@ -1,12 +1,12 @@
 /*TO DO LIST
-1- pin 11 is no longer used and pin 9 is now shutter_limit_switch 
-change the arduino board connections to the terminal block to reflect this and then delete these lines
-2 - decide what to do about the serial writes used for debugging
+  1- pin 11 is no longer used and pin 9 is now shutter_limit_switch
+  change the arduino board connections to the terminal block to reflect this and then delete these lines
+  2 - decide what to do about the serial writes used for debugging
+  3 - initiales the pen and close pin values - done
 
-
-change text to command_from_master to improve code undestanding
- this routine receives commands from the radio master arduino - OS# CS# and SS#
- data is only returned by SS# - the shutter status - a char message 'open' or 'closed'
+  change text to command_from_master to improve code undestanding
+  this routine receives commands from the radio master arduino - OS# CS# and SS#
+  data is only returned by SS# - the shutter status - a char message 'open' or 'closed'
 
 */
 
@@ -39,9 +39,12 @@ void setup()
 {
 
   pinMode(PIN10, OUTPUT);                 // this is an NRF24L01 requirement if pin 10 is not used
-  pinMode(open_shutter_pin, OUTPUT); 
-  pinMode(close_shutter_pin, OUTPUT); 
+  pinMode(open_shutter_pin, OUTPUT);
+  pinMode(close_shutter_pin, OUTPUT);
   pinMode(shutter_status_pin, INPUT);     //input on this arduino and OUTPUT on the shutter arduino
+
+  digitalWrite(open_shutter_pin, LOW);      //open and close pins are used as active high, so initialise to low
+  digitalWrite(close_shutter_pin, LOW);
 
   Serial.begin(9600);                     //used only for debug writes to sermon
 
@@ -68,7 +71,7 @@ void setup()
 
 void loop()
 {
-  
+
 
   while (!radio.available())
   {
@@ -121,8 +124,8 @@ void loop()
       radio.startListening();                                        //straight away after write to master, in case anothe message is sent
 
       if (rslt)
-    {
-      Serial.println("result of shutter Tx was true");
+      {
+        Serial.println("result of shutter Tx was true");
       }
       else
       {
@@ -130,8 +133,8 @@ void loop()
       }
 
       for ( int i = 0; i < 10; i++)                //initialise the message array back to nulls
-    {
-      message[i] = 0;
+      {
+        message[i] = 0;
       }                                           //end for
     }                                             //endif SS
 
@@ -148,21 +151,21 @@ void close_shutter()
   // commands to close shutters
   digitalWrite (open_shutter_pin, LOW);              //sets the voltage polarity on the motors
   digitalWrite (close_shutter_pin, HIGH);
-  
+
 } // end  CS
 
 
 void open_shutter()
 {
-digitalWrite (close_shutter_pin, LOW);
-digitalWrite (open_shutter_pin, HIGH);               // activate the open shutter routine on the shutter arduino
+  digitalWrite (close_shutter_pin, LOW);
+  digitalWrite (open_shutter_pin, HIGH);               // activate the open shutter routine on the shutter arduino
 
 }// end  OS
 
 void shutter_status()
 {
-  
- shutterstatus = digitalRead(shutter_status_pin);   // the status pin is set in shutter arduino true = closed 
+
+  shutterstatus = digitalRead(shutter_status_pin);   // the status pin is set in shutter arduino true = closed
   if (shutterstatus == true)
   {
     message [0] = 'C';
