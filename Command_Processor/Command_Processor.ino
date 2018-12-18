@@ -1,11 +1,14 @@
-//to do pin 11 is no longer used and pin 9 is now shutter_limit_switch 
-//change the arduino board connections to the terminal block to reflect this and then delete these lines
-//
-//change text to command_from_master to improve code undestanding
-// this routine receives commands from the radio master arduino - OS# CS# and SS#
-// data is only returned by SS# - if the shutter is open return char message 'open' or 'closed'
-//
-//
+/*TO DO LIST
+1- pin 11 is no longer used and pin 9 is now shutter_limit_switch 
+change the arduino board connections to the terminal block to reflect this and then delete these lines
+2 - decide what to do about the serial writes used for debugging
+
+
+change text to command_from_master to improve code undestanding
+ this routine receives commands from the radio master arduino - OS# CS# and SS#
+ data is only returned by SS# - the shutter status - a char message 'open' or 'closed'
+
+*/
 
 #include <SoftwareSerial.h>
 #include <SPI.h>
@@ -20,13 +23,13 @@ RF24 radio(7, 8); // CE, CSN
 // pin definitions for shutter relays
 
 // These data pins link to  Relay board pins IN1, IN2, in3 and IN4
-#define open_shutter_pin    53      // arduino  pin 4
-#define close_shutter_pin   54      // arduino  pin 5
-#define shutter_status_pin  55      // etc
+#define open_shutter_pin    46      // arduino  pin 46 corresponds with same pin number on the shutter arduino
+#define close_shutter_pin   47      // these 3 pins are used to ' lay off' the open close and status commands to the shutter arduino
+#define shutter_status_pin  48      // to prevent the shutter status command being blocked and causing radio timeout
 
 
 
-const byte thisaddress[6] =       "shutt";            // 00002 the address of this arduino board/ transmitter
+const byte thisaddress[6] =       "shutt";            // "shutt" - the address of this arduino board/ transmitter
 const byte masterNodeaddress[6] = "mastr";
 char message[10] = "";
 String receivedData;
@@ -38,9 +41,9 @@ void setup()
   pinMode(PIN10, OUTPUT);                 // this is an NRF24L01 requirement if pin 10 is not used
   pinMode(open_shutter_pin, OUTPUT); 
   pinMode(close_shutter_pin, OUTPUT); 
-  pinMode(shutter_status_pin, INPUT); 
+  pinMode(shutter_status_pin, INPUT);     //input on this arduino and OUTPUT on the shutter arduino
 
-  Serial.begin(9600);
+  Serial.begin(9600);                     //used only for debug writes to sermon
 
   radio.begin();
   radio.setChannel(100);
@@ -49,21 +52,23 @@ void setup()
   // enable ack payload - slaves can reply with data using this feature if needed in future
   radio.enableAckPayload();
 
-  radio.setPALevel(RF24_PA_LOW);
+  radio.setPALevel(RF24_PA_LOW);  // this is one step up from MIN and provides approx 15 feet range - so fine in observatory
   radio.enableDynamicPayloads();
-  radio.setRetries(15, 15);
+  radio.setRetries(15, 15);        // 15 retries at 15ms intervals
 
 
   radio.openReadingPipe(1, thisaddress);    // the 1st parameter can be any number 1 to 5 the master routine uses 1
-  radio.startListening();
+  radio.startListening();                   // listen for commands from the master radio which itself receives from the c# dome driver
 
 
 }  // end setup
 
+//========================================================================================================================================
+//========================================================================================================================================
+
 void loop()
 {
-  //  already done in setup radio.openReadingPipe(1, thisaddress);    // 00002
- // radio.startListening();
+  
 
   while (!radio.available())
   {
@@ -104,16 +109,16 @@ void loop()
       shutter_status();
 
       Serial.println("the value of shutter status is ");
-      Serial.print(message);
+      Serial.println(message);
       Serial.println("--------------------------------------------------");
 
 
       radio.openWritingPipe(masterNodeaddress);
       radio.stopListening();
 
-      delay(50);   // to allow the master to change from tx to rx
-      bool rslt =       radio.write(&message, sizeof(message));
-      radio.startListening();          //straight away after write to master, in case anothe message is sent
+      delay(50);                                                    // to allow the master to change from tx to rx
+      bool rslt = radio.write(&message, sizeof(message));
+      radio.startListening();                                        //straight away after write to master, in case anothe message is sent
 
       if (rslt)
     {
@@ -141,8 +146,8 @@ void loop()
 void close_shutter()
 {
   // commands to close shutters
-  digitalWrite (open_shutter_pin, LOW);
-  digitalWrite(close_shutter_pin, HIGH);
+  digitalWrite (open_shutter_pin, LOW);              //sets the voltage polarity on the motors
+  digitalWrite (close_shutter_pin, HIGH);
   
 } // end  CS
 
@@ -150,7 +155,7 @@ void close_shutter()
 void open_shutter()
 {
 digitalWrite (close_shutter_pin, LOW);
-digitalWrite (open_shutter_pin, HIGH);   // activate the open shutter routine on the shutter arduino
+digitalWrite (open_shutter_pin, HIGH);               // activate the open shutter routine on the shutter arduino
 
 }// end  OS
 
