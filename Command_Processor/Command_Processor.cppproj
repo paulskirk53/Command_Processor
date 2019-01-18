@@ -55,7 +55,7 @@
   <avrgcc.compiler.symbols.DefSymbols>
     <ListValues>
       <Value>__AVR_ATmega2560__</Value>
-      <Value>ARDUINO=10805</Value>
+      <Value>ARDUINO=10808</Value>
       <Value>ARDUINO_MAIN</Value>
       <Value>F_CPU=16000000L</Value>
       <Value>__AVR__</Value>
@@ -70,7 +70,7 @@
       <Value>C:/Users/Paul/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.23/libraries/SPI/src</Value>
       <Value>C:/Users/Paul/Google Drive/libraries/RF24-1.3.1</Value>
       <Value>C:/Users/Paul/Google Drive/libraries/RF24-1.3.1/utility</Value>
-      <Value>C:/Program Files (x86)/arduino-1.8.5-windows/arduino-1.8.5/libraries</Value>
+      <Value>C:/Arduino/libraries</Value>
       <Value>C:/Users/Paul/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.23/libraries</Value>
       <Value>C:/Users/Paul/Google Drive/libraries</Value>
       <Value>C:/Users/Paul/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.23/cores/arduino</Value>
@@ -93,7 +93,7 @@
   <avrgcccpp.compiler.symbols.DefSymbols>
     <ListValues>
       <Value>__AVR_ATmega2560__</Value>
-      <Value>ARDUINO=10805</Value>
+      <Value>ARDUINO=10808</Value>
       <Value>ARDUINO_MAIN</Value>
       <Value>F_CPU=16000000L</Value>
       <Value>__AVR__</Value>
@@ -108,7 +108,7 @@
       <Value>C:/Users/Paul/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.23/libraries/SPI/src</Value>
       <Value>C:/Users/Paul/Google Drive/libraries/RF24-1.3.1</Value>
       <Value>C:/Users/Paul/Google Drive/libraries/RF24-1.3.1/utility</Value>
-      <Value>C:/Program Files (x86)/arduino-1.8.5-windows/arduino-1.8.5/libraries</Value>
+      <Value>C:/Arduino/libraries</Value>
       <Value>C:/Users/Paul/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.23/libraries</Value>
       <Value>C:/Users/Paul/Google Drive/libraries</Value>
       <Value>C:/Users/Paul/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.23/cores/arduino</Value>
@@ -128,7 +128,7 @@
   <avrgcccpp.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcccpp.assembler.debugging.DebugLevel>
 </AvrGccCpp>
     </ToolchainSettings>
-    <VMSETTING_IncludePaths>../../../Command_Processor;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.23/libraries/SoftwareSerial/src;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.23/libraries/SPI/src;C:/Users/Paul/Google Drive/libraries/RF24-1.3.1;C:/Users/Paul/Google Drive/libraries/RF24-1.3.1/utility;C:/Program Files (x86)/arduino-1.8.5-windows/arduino-1.8.5/libraries;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.23/libraries;C:/Users/Paul/Google Drive/libraries;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.23/cores/arduino;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.23/variants/mega;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/avr/include;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/avr/include/avr;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/lib/gcc/avr/4.8.1/include;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/lib/gcc/avr/4.9.2/include;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/lib/gcc/avr/4.9.3/include;</VMSETTING_IncludePaths>
+    <VMSETTING_IncludePaths>../../../Command_Processor;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.23/libraries/SoftwareSerial/src;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.23/libraries/SPI/src;C:/Users/Paul/Google Drive/libraries/RF24-1.3.1;C:/Users/Paul/Google Drive/libraries/RF24-1.3.1/utility;C:/Program Files (x86)/arduino-1.8.5-windows/arduino-1.8.5/libraries;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.23/libraries;C:/Users/Paul/Google Drive/libraries;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.23/cores/arduino;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.23/variants/mega;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/avr/include;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/avr/include/avr;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/lib/gcc/avr/4.8.1/include;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/lib/gcc/avr/4.9.2/include;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/lib/gcc/avr/4.9.3/include;C:/Arduino/libraries;</VMSETTING_IncludePaths>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <ToolchainSettings>
@@ -143,7 +143,7 @@
   <avrgcc.compiler.symbols.DefSymbols>
     <ListValues>
       <Value>__AVR_ATmega2560__</Value>
-      <Value>ARDUINO=10805</Value>
+      <Value>ARDUINO=10808</Value>
       <Value>ARDUINO_MAIN</Value>
       <Value>F_CPU=16000000L</Value>
       <Value>__AVR__</Value>
@@ -158,7 +158,7 @@
       <Value>C:/Users/Paul/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.23/libraries/SPI/src</Value>
       <Value>C:/Users/Paul/Google Drive/libraries/RF24-1.3.1</Value>
       <Value>C:/Users/Paul/Google Drive/libraries/RF24-1.3.1/utility</Value>
-      <Value>C:/Program Files (x86)/arduino-1.8.5-windows/arduino-1.8.5/libraries</Value>
+      <Value>C:/Arduino/libraries</Value>
       <Value>C:/Users/Paul/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.23/libraries</Value>
       <Value>C:/Users/Paul/Google Drive/libraries</Value>
       <Value>C:/Users/Paul/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.23/cores/arduino</Value>
@@ -181,7 +181,7 @@
   <avrgcccpp.compiler.symbols.DefSymbols>
     <ListValues>
       <Value>__AVR_ATmega2560__</Value>
-      <Value>ARDUINO=10805</Value>
+      <Value>ARDUINO=10808</Value>
       <Value>ARDUINO_MAIN</Value>
       <Value>F_CPU=16000000L</Value>
       <Value>__AVR__</Value>
@@ -196,7 +196,7 @@
       <Value>C:/Users/Paul/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.23/libraries/SPI/src</Value>
       <Value>C:/Users/Paul/Google Drive/libraries/RF24-1.3.1</Value>
       <Value>C:/Users/Paul/Google Drive/libraries/RF24-1.3.1/utility</Value>
-      <Value>C:/Program Files (x86)/arduino-1.8.5-windows/arduino-1.8.5/libraries</Value>
+      <Value>C:/Arduino/libraries</Value>
       <Value>C:/Users/Paul/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.23/libraries</Value>
       <Value>C:/Users/Paul/Google Drive/libraries</Value>
       <Value>C:/Users/Paul/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.23/cores/arduino</Value>
@@ -216,7 +216,7 @@
   <avrgcccpp.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcccpp.assembler.debugging.DebugLevel>
 </AvrGccCpp>
     </ToolchainSettings>
-    <VMSETTING_IncludePaths>../../../Command_Processor;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.23/libraries/SoftwareSerial/src;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.23/libraries/SPI/src;C:/Users/Paul/Google Drive/libraries/RF24-1.3.1;C:/Users/Paul/Google Drive/libraries/RF24-1.3.1/utility;C:/Program Files (x86)/arduino-1.8.5-windows/arduino-1.8.5/libraries;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.23/libraries;C:/Users/Paul/Google Drive/libraries;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.23/cores/arduino;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.23/variants/mega;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/avr/include;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/avr/include/avr;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/lib/gcc/avr/4.8.1/include;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/lib/gcc/avr/4.9.2/include;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/lib/gcc/avr/4.9.3/include;</VMSETTING_IncludePaths>
+    <VMSETTING_IncludePaths>../../../Command_Processor;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.23/libraries/SoftwareSerial/src;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.23/libraries/SPI/src;C:/Users/Paul/Google Drive/libraries/RF24-1.3.1;C:/Users/Paul/Google Drive/libraries/RF24-1.3.1/utility;C:/Program Files (x86)/arduino-1.8.5-windows/arduino-1.8.5/libraries;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.23/libraries;C:/Users/Paul/Google Drive/libraries;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.23/cores/arduino;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/hardware/avr/1.6.23/variants/mega;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/avr/include;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/avr/include/avr;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/lib/gcc/avr/4.8.1/include;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/lib/gcc/avr/4.9.2/include;C:/Users/Paul/AppData/Local/arduino15/packages/arduino/tools/avr-gcc/5.4.0-atmel3.6.1-arduino2/lib/gcc/avr/4.9.3/include;C:/Arduino/libraries;</VMSETTING_IncludePaths>
   </PropertyGroup>
   <ItemGroup>
     <None Include="Command_Processor.ino">

@@ -1,6 +1,6 @@
 /*TO DO LIST
   1- pin 11 is no longer used and pin 9 is now shutter_limit_switch
-  change the arduino board connections to the terminal block to reflect this and then delete these lines
+  
   2 - decide what to do about the serial writes used for debugging
   
 
@@ -175,7 +175,7 @@ void shutter_status()
     message [3] = 'S';
     message [4] = 'E';
     message [5] = 'D';
-    message [6] = '#';
+    message [6] = 0;
     //Serial.println( "closed#");  // return closed to driver modded for radio
     //Serial.println("the value of shutter status is");
     //  Serial.println(message);
@@ -189,7 +189,7 @@ void shutter_status()
     message [1] = 'P';
     message [2] = 'E';
     message [3] = 'N';
-    message [4] = '#';
+    message [4] = 0;
     message [5] = 0;
     message [6] = 0;
     //Serial.println("the value of shutter status is");
