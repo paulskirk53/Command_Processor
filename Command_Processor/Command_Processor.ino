@@ -1,16 +1,13 @@
 /*TO DO LIST
   1- pin 11 is no longer used and pin 9 is now shutter_limit_switch
   
-  2 - decide what to do about the serial writes used for debugging
-  
-
-  change text to command_from_master to improve code undestanding
+ 
   this routine receives commands from the radio master arduino - OS# CS# and SS#
   data is only returned by SS# - the shutter status - a char message 'open' or 'closed'
 
 */
 
-#include <SoftwareSerial.h>
+
 #include <SPI.h>
 #include <nRF24L01.h>               // shown to be not required
 #include <RF24.h>
@@ -22,14 +19,14 @@ RF24 radio(7, 8); // CE, CSN
 
 // pin definitions for shutter relays
 
-// These data pins link to  Relay board pins IN1, IN2, in3 and IN4
+// These data pins link to  Relay board pins IN1, IN2, IN3 and IN4
 #define open_shutter_pin    46      // arduino  pin 46 corresponds with same pin number on the shutter arduino
 #define close_shutter_pin   47      // these 3 pins are used to ' lay off' the open close and status commands to the shutter arduino
 #define shutter_status_pin  48      // to prevent the shutter status command being blocked and causing radio timeout
 
 
 
-const byte thisaddress[6] =       "shutt";            // "shutt" - the address of this arduino board/ transmitter
+const byte thisaddress[6] =       "shutt";   // "shutt" - the address of this arduino board/ transmitter
 const byte masterNodeaddress[6] = "mastr";
 char message[10] = "";
 String receivedData;
@@ -38,26 +35,26 @@ bool shutterstatus = true;
 void setup()
 {
 
-  pinMode(PIN10, OUTPUT);                 // this is an NRF24L01 requirement if pin 10 is not used
+  pinMode(PIN10, OUTPUT);                     // this is an NRF24L01 requirement if pin 10 is not used
   pinMode(open_shutter_pin, OUTPUT);
   pinMode(close_shutter_pin, OUTPUT);
-  pinMode(shutter_status_pin, INPUT_PULLUP);     //input on this arduino and OUTPUT on the shutter arduino
+  pinMode(shutter_status_pin, INPUT_PULLUP);  //input on this arduino and OUTPUT on the shutter arduino
 
-  digitalWrite(open_shutter_pin, HIGH);      //open and close pins are used as active low, so initialise to high
+  digitalWrite(open_shutter_pin, HIGH);       //open and close pins are used as active low, so initialise to high
   digitalWrite(close_shutter_pin, HIGH);
 
-  Serial.begin(9600);                     //used only for debug writes to sermon
+  Serial.begin(9600);                         //used only for debug writes to sermon
 
   radio.begin();
   radio.setChannel(100);
-  radio.setDataRate(RF24_250KBPS);  // set RF datarate
+  radio.setDataRate(RF24_250KBPS);           // set RF datarate
 
   // enable ack payload - slaves can reply with data using this feature if needed in future
   radio.enableAckPayload();
 
-  radio.setPALevel(RF24_PA_LOW);  // this is one step up from MIN and provides approx 15 feet range - so fine in observatory
+  radio.setPALevel(RF24_PA_LOW);            // this is one step up from MIN and provides approx 15 feet range - so fine in observatory
   radio.enableDynamicPayloads();
-  radio.setRetries(15, 15);        // 15 retries at 15ms intervals
+  radio.setRetries(15, 15);                 // 15 retries at 15ms intervals
 
 
   radio.openReadingPipe(1, thisaddress);    // the 1st parameter can be any number 1 to 5 the master routine uses 1
@@ -87,10 +84,6 @@ void loop()
     radio.read(&text, sizeof(text));
 
 
-    Serial.println("this is the shutter command processor  ");
-    Serial.print("The text received from Master was: ");
-    Serial.println(text);
-
 
     if (text[0] == 'C' && text[1] == 'S' && text[2] == '#') // close shutter command
     {
@@ -102,7 +95,7 @@ void loop()
 
     if (text[0] == 'O' && text[1] == 'S' && text[2] == '#') // open shutter command
     {
-      //Serial.print ("received OS");
+      
       open_shutter();
 
     }
@@ -112,19 +105,14 @@ void loop()
 
       shutter_status();
 
-      Serial.println("the value of shutter status is ");
-      Serial.println(message);
-      Serial.println("--------------------------------------------------");
-
-
       radio.openWritingPipe(masterNodeaddress);
       radio.stopListening();
 
-      delay(50);                                                    // to allow the master to change from tx to rx
+      delay(50);                                            // to allow the master to change from tx to rx
       bool rslt = radio.write(&message, sizeof(message));
-      radio.startListening();                                        //straight away after write to master, in case anothe message is sent
-
-      if (rslt)
+      radio.startListening();                               // straight away after write to master, in case another message is sent
+	  /*
+      if (rslt)   // i think this commented out section was for testing as it does serial prints not radio writes
       {
         Serial.println("result of shutter Tx was true");
       }
@@ -132,8 +120,8 @@ void loop()
       {
         Serial.println("result of shutter Tx was error");
       }
-
-      for ( int i = 0; i < 10; i++)                //initialise the message array back to nulls
+	  */
+      for ( int i = 0; i < 10; i++)                        // initialise the message array back to nulls
       {
         message[i] = 0;
       }                                           //end for
@@ -176,15 +164,11 @@ void shutter_status()
     message [4] = 'E';
     message [5] = 'D';
     message [6] = 0;
-    //Serial.println( "closed#");  // return closed to driver modded for radio
-    //Serial.println("the value of shutter status is");
-    //  Serial.println(message);
-    //    Serial.println("--------------------------------------------------");
 
   }
   else
   {
-    //Serial.println( "open#");   // return open to driver  modded for radio
+    
     message [0] = 'O';
     message [1] = 'P';
     message [2] = 'E';
@@ -192,9 +176,7 @@ void shutter_status()
     message [4] = 0;
     message [5] = 0;
     message [6] = 0;
-    //Serial.println("the value of shutter status is");
-    //  Serial.println(message);
-    //    Serial.println("--------------------------------------------------");
+
   }
 
 
