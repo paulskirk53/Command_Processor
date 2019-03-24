@@ -1,4 +1,9 @@
 /*TO DO LIST
+  14-2-19 - Testing today showed a problem with relay 1 light on permanently
+  the OS routine here sets the open_shutter_pin low (active) and this is not reset to high until a cs command occurs
+  This will be problematic in the shutter routine as it polls the pins to detect state
+  so perhaps a momentary low state for OS and CS would be better?
+  
   1- pin 11 is no longer used and pin 9 is now shutter_limit_switch
   
  
@@ -138,8 +143,10 @@ void loop()
 void close_shutter()
 {
   // commands to close shutters
-  digitalWrite (open_shutter_pin, HIGH);              //sets the voltage polarity on the motors
-  digitalWrite (close_shutter_pin, LOW);
+  digitalWrite (open_shutter_pin, HIGH);             // activate the open shutter routine on the shutter arduino 
+  digitalWrite (close_shutter_pin, LOW);             // 50 millisec delay, then high again
+  delay(50);
+  digitalWrite (close_shutter_pin, HIGH);
 
 } // end  CS
 
@@ -147,8 +154,9 @@ void close_shutter()
 void open_shutter()
 {
   digitalWrite (close_shutter_pin, HIGH);
-  digitalWrite (open_shutter_pin, LOW);               // activate the open shutter routine on the shutter arduino
-
+  digitalWrite (open_shutter_pin, LOW);               // activate the open shutter routine on the shutter arduino 
+  delay(50) ;                                         // 50 millisec delay, then high again
+  digitalWrite (open_shutter_pin, HIGH);
 }// end  OS
 
 void shutter_status()
