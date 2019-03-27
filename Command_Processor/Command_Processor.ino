@@ -145,8 +145,8 @@ void close_shutter()
   // commands to close shutters
   digitalWrite (open_shutter_pin, HIGH);             // activate the open shutter routine on the shutter arduino 
   digitalWrite (close_shutter_pin, LOW);             // 50 millisec delay, then high again
-  delay(50);
-  digitalWrite (close_shutter_pin, HIGH);
+  //delay(50);
+  //digitalWrite (close_shutter_pin, HIGH);
 
 } // end  CS
 
@@ -155,8 +155,8 @@ void open_shutter()
 {
   digitalWrite (close_shutter_pin, HIGH);
   digitalWrite (open_shutter_pin, LOW);               // activate the open shutter routine on the shutter arduino 
-  delay(50) ;                                         // 50 millisec delay, then high again
-  digitalWrite (open_shutter_pin, HIGH);
+  //delay(50) ;                                         // 50 millisec delay, then high again
+  //digitalWrite (open_shutter_pin, HIGH);
 }// end  OS
 
 void shutter_status()
@@ -172,7 +172,7 @@ void shutter_status()
     message [4] = 'E';
     message [5] = 'D';
     message [6] = 0;
-
+	digitalWrite (close_shutter_pin, HIGH);   // the status is 'closed', so set the close activation pin back to high
   }
   else
   {
@@ -184,7 +184,7 @@ void shutter_status()
     message [4] = 0;
     message [5] = 0;
     message [6] = 0;
-
+	digitalWrite (open_shutter_pin, HIGH); // the status is 'open', so set the open activation pin back to high
   }
 
 
