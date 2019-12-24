@@ -1,16 +1,5 @@
-/*TO DO LIST
-  14-2-19 - Testing today showed a problem with relay 1 light on permanently
-  the OS routine here sets the open_shutter_pin low (active) and this is not reset to high until a cs command occurs
-  This will be problematic in the shutter routine as it polls the pins to detect state
-  so perhaps a momentary low state for OS and CS would be better?
-  
-  1- pin 11 is no longer used and pin 9 is now shutter_limit_switch
-  
- 
-  this routine receives commands from the radio master arduino - OS# CS# and SS#
-  data is only returned by SS# - the shutter status - a char message 'open' or 'closed'
+//TO DO LIST
 
-*/
 
 
 #include <SPI.h>
@@ -116,16 +105,7 @@ void loop()
       delay(50);                                            // to allow the master to change from tx to rx
       bool rslt = radio.write(&message, sizeof(message));
       radio.startListening();                               // straight away after write to master, in case another message is sent
-	  /*
-      if (rslt)   // i think this commented out section was for testing as it does serial prints not radio writes
-      {
-        Serial.println("result of shutter Tx was true");
-      }
-      else
-      {
-        Serial.println("result of shutter Tx was error");
-      }
-	  */
+
       for ( int i = 0; i < 10; i++)                        // initialise the message array back to nulls
       {
         message[i] = 0;
@@ -143,10 +123,9 @@ void loop()
 void close_shutter()
 {
   // commands to close shutters
-  digitalWrite (open_shutter_pin, HIGH);             // activate the open shutter routine on the shutter arduino 
+  digitalWrite (open_shutter_pin , HIGH);             // activate the open shutter routine on the shutter arduino 
   digitalWrite (close_shutter_pin, LOW);             // 50 millisec delay, then high again
-  //delay(50);
-  //digitalWrite (close_shutter_pin, HIGH);
+ 
 
 } // end  CS
 
@@ -155,8 +134,7 @@ void open_shutter()
 {
   digitalWrite (close_shutter_pin, HIGH);
   digitalWrite (open_shutter_pin, LOW);               // activate the open shutter routine on the shutter arduino 
-  //delay(50) ;                                         // 50 millisec delay, then high again
-  //digitalWrite (open_shutter_pin, HIGH);
+
 }// end  OS
 
 void shutter_status()
