@@ -14,8 +14,8 @@ RF24 radio(7, 8); // CE, CSN
 // pin definitions for shutter relays
 
 // These data pins link to  Relay board pins IN1, IN2, IN3 and IN4
-#define open_shutter_pin    46      // arduino  pin 46 corresponds with same pin number on the shutter arduino
-#define close_shutter_pin   47      // these 3 pins are used to ' lay off' the open close and status commands to the shutter arduino
+#define open_shutter_pin    30      // arduino  pin 46 corresponds with same pin number on the shutter arduino
+#define close_shutter_pin   34      // these 3 pins are used to ' lay off' the open close and status commands to the shutter arduino
 #define shutter_status_pin  48      // to prevent the shutter status command being blocked and causing radio timeout
 
 
