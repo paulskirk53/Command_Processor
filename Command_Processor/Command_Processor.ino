@@ -1,5 +1,5 @@
-//TO DO LIST
-
+//Version 1 - change the variable pkversion too. version control started jan 20
+//changed baud rate to 19200 Jan 20
 
 
 #include <SPI.h>
@@ -24,6 +24,7 @@ const byte thisaddress[6] =       "shutt";   // "shutt" - the address of this ar
 const byte masterNodeaddress[6] = "mastr";
 char message[10] = "";
 String receivedData;
+String pkversion = "1.0";
 bool shutterstatus = true;
 
 void setup()
@@ -37,7 +38,7 @@ void setup()
   digitalWrite(open_shutter_pin, HIGH);       //open and close pins are used as active low, so initialise to high
   digitalWrite(close_shutter_pin, HIGH);
 
-  Serial.begin(9600);                         //used only for debug writes to sermon
+  Serial.begin(19200);                         //used only for debug writes to sermon
 
   radio.begin();
   radio.setChannel(100);
