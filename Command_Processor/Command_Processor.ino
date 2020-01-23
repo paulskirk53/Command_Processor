@@ -22,6 +22,9 @@ RF24 radio(7, 8); // CE, CSN
 
 const byte thisaddress[6] =       "shutt";   // "shutt" - the address of this arduino board/ transmitter
 const byte masterNodeaddress[6] = "mastr";
+
+const int channel = 115;
+
 char message[10] = "";
 String receivedData;
 String pkversion = "1.0";
@@ -41,7 +44,7 @@ void setup()
   Serial.begin(19200);                         //used only for debug writes to sermon
 
   radio.begin();
-  radio.setChannel(100);
+  radio.setChannel(channel);
   radio.setDataRate(RF24_250KBPS);           // set RF datarate
 
   // enable ack payload - slaves can reply with data using this feature if needed in future
