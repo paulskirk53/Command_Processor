@@ -41,6 +41,8 @@ void setup()
   digitalWrite(open_shutter_pin, HIGH);       //open and close pins are used as active low, so initialise to high
   digitalWrite(close_shutter_pin, HIGH);
 
+  SPI.begin();
+
   Serial.begin(19200);                         //used only for debug writes to sermon
 
   radio.begin();
@@ -93,7 +95,7 @@ void loop()
 
     if (text[0] == 'O' && text[1] == 'S' && text[2] == '#') // open shutter command
     {
-      
+
       open_shutter();
 
     }
@@ -127,9 +129,9 @@ void loop()
 void close_shutter()
 {
   // commands to close shutters
-  digitalWrite (open_shutter_pin , HIGH);             // activate the open shutter routine on the shutter arduino 
+  digitalWrite (open_shutter_pin , HIGH);             // activate the open shutter routine on the shutter arduino
   digitalWrite (close_shutter_pin, LOW);             // 50 millisec delay, then high again
- 
+
 
 } // end  CS
 
@@ -137,7 +139,7 @@ void close_shutter()
 void open_shutter()
 {
   digitalWrite (close_shutter_pin, HIGH);
-  digitalWrite (open_shutter_pin, LOW);               // activate the open shutter routine on the shutter arduino 
+  digitalWrite (open_shutter_pin, LOW);               // activate the open shutter routine on the shutter arduino
 
 }// end  OS
 
@@ -154,11 +156,11 @@ void shutter_status()
     message [4] = 'E';
     message [5] = 'D';
     message [6] = 0;
-	digitalWrite (close_shutter_pin, HIGH);   // the status is 'closed', so set the close activation pin back to high
+    digitalWrite (close_shutter_pin, HIGH);   // the status is 'closed', so set the close activation pin back to high
   }
   else
   {
-    
+
     message [0] = 'O';
     message [1] = 'P';
     message [2] = 'E';
@@ -166,7 +168,7 @@ void shutter_status()
     message [4] = 0;
     message [5] = 0;
     message [6] = 0;
-	digitalWrite (open_shutter_pin, HIGH); // the status is 'open', so set the open activation pin back to high
+    digitalWrite (open_shutter_pin, HIGH); // the status is 'open', so set the open activation pin back to high
   }
 
 
