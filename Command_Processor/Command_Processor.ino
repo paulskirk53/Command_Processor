@@ -3,7 +3,7 @@
 
 
 #include <SPI.h>
-#include <nRF24L01.h>               // shown to be not required
+
 #include <RF24.h>
 
 //for nrf to work, pin 10 must be high if it is not used as an nrf connecton
@@ -20,44 +20,34 @@ RF24 radio(7, 8); // CE, CSN
 
 
 
-const byte thisaddress[6] =       "shutt";   // "shutt" - the address of this arduino board/ transmitter
+const byte thisaddress[6]       = "shutt";   // "shutt" - the address of this arduino board/ transmitter
 const byte masterNodeaddress[6] = "mastr";
 
-const int channel = 115;
+const int channel   = 115;
 
-char message[10] = "";
+char message[10]    = "";
 String receivedData;
-String pkversion = "1.0";
-bool shutterstatus = true;
+String pkversion    = "1.0";
+bool shutterstatus  = true;
+bool Tx_sent        = false;
 
 void setup()
 {
 
-  pinMode(PIN10, OUTPUT);                     // this is an NRF24L01 requirement if pin 10 is not used
-  pinMode(open_shutter_pin, OUTPUT);
-  pinMode(close_shutter_pin, OUTPUT);
-  pinMode(shutter_status_pin, INPUT_PULLUP);  //input on this arduino and OUTPUT on the shutter arduino
+  pinMode(PIN10,                  OUTPUT);                     // this is an NRF24L01 requirement if pin 10 is not used
+  pinMode(open_shutter_pin,       OUTPUT);
+  pinMode(close_shutter_pin,      OUTPUT);
+  pinMode(shutter_status_pin,     INPUT_PULLUP);  //input on this arduino and OUTPUT on the shutter arduino
 
-  digitalWrite(open_shutter_pin, HIGH);       //open and close pins are used as active low, so initialise to high
+  digitalWrite(open_shutter_pin,  HIGH);       //open and close pins are used as active low, so initialise to high
   digitalWrite(close_shutter_pin, HIGH);
 
   SPI.begin();
 
   Serial.begin(19200);                         //used only for debug writes to sermon
 
-  radio.begin();
-  radio.setChannel(channel);
-  radio.setDataRate(RF24_250KBPS);           // set RF datarate
+  ConfigureRadio();
 
-  // enable ack payload - slaves can reply with data using this feature if needed in future
-  radio.enableAckPayload();
-
-  radio.setPALevel(RF24_PA_LOW);            // this is one step up from MIN and provides approx 15 feet range - so fine in observatory
-  radio.enableDynamicPayloads();
-  radio.setRetries(15, 15);                 // 15 retries at 15ms intervals
-
-
-  radio.openReadingPipe(1, thisaddress);    // the 1st parameter can be any number 1 to 5 the master routine uses 1
   radio.startListening();                   // listen for commands from the master radio which itself receives from the c# dome driver
 
 
@@ -66,22 +56,36 @@ void setup()
 //========================================================================================================================================
 //========================================================================================================================================
 
+
+uint32_t configTimer =  millis();
+
+
 void loop()
 {
-
-
-  while (!radio.available())
-  {
-    //do nothing
-  }
-
 
   if (radio.available())
   {
     char text[32] = "";             // used to store what the master node sent e.g AZ hash SA hash
 
 
-    radio.read(&text, sizeof(text));
+    //error detection for radio always avaiable below
+    //
+
+    uint32_t failTimer = millis();
+
+    while (radio.available())
+    { //If available always returns true, there is a problem
+      if (millis() - failTimer > 250)
+      {
+        radio.failureDetected = true;
+        ConfigureRadio();                         // reconfigure the radio
+        radio.startListening();
+        Serial.println("Radio available failure detected");
+        break;
+      }
+      radio.read(&text, sizeof(text));
+
+    }
 
 
 
@@ -105,11 +109,28 @@ void loop()
 
       shutter_status();
 
-      radio.openWritingPipe(masterNodeaddress);
+      TestforlostRadioConfiguration() ;
+
       radio.stopListening();
 
-      delay(50);                                            // to allow the master to change from tx to rx
-      bool rslt = radio.write(&message, sizeof(message));
+      //check for timeout / send failure
+
+      Tx_sent = false;
+
+      while (Tx_sent == false)
+      {
+        Tx_sent = radio.write(&message, sizeof(message));   // true if the tx was successful
+        // test for timeout after tx
+        if (Tx_sent == false)
+        {
+          ConfigureRadio();    // if the Tx wasn't successful, restart the radio
+          radio.stopListening();
+          Serial.println("tx_sent failure ");
+        }
+        Serial.print("radio wrote ");
+        Serial.println(message);
+      }
+
       radio.startListening();                               // straight away after write to master, in case another message is sent
 
       for ( int i = 0; i < 10; i++)                        // initialise the message array back to nulls
@@ -142,6 +163,42 @@ void open_shutter()
   digitalWrite (open_shutter_pin, LOW);               // activate the open shutter routine on the shutter arduino
 
 }// end  OS
+
+void ConfigureRadio()
+{
+
+  radio.begin();
+  radio.setChannel(channel);
+  radio.setDataRate(RF24_250KBPS);           // set RF datarate
+
+  // enable ack payload - slaves can reply with data using this feature if needed in future
+  radio.enableAckPayload();
+
+  radio.setPALevel(RF24_PA_LOW);            // this is one step up from MIN and provides approx 15 feet range - so fine in observatory
+  radio.enableDynamicPayloads();
+  radio.setRetries(15, 15);                 // 15 retries at 15ms intervals
+
+  radio.openReadingPipe(1, thisaddress);    // the 1st parameter can be any number 1 to 5 the master routine uses 1
+  radio.openWritingPipe(masterNodeaddress);
+}
+
+void TestforlostRadioConfiguration()   // this tests for the radio losing its configuration - one of the known failure modes for the NRF24l01+
+{
+
+  if (millis() - configTimer > 5000)
+  {
+    configTimer = millis();
+    if (radio.getChannel() != 115)   // first possible radio error - the configuration has been lost. This can be checked
+      // by testing whether a non default setting has returned to the default - for channel the default is 76
+    {
+      radio.failureDetected = true;
+      Serial.print("Radio configuration error detected");
+      ConfigureRadio();
+
+    }
+  }
+
+}
 
 void shutter_status()
 {
