@@ -1,4 +1,4 @@
-//Version 1 - change the variable pkversion too. version control started jan 20
+//Version 2 - change the variable pkversion too. version control started jan 20
 //changed baud rate to 19200 Jan 20
 
 
@@ -23,13 +23,14 @@ RF24 radio(7, 8); // CE, CSN
 const byte thisaddress[6]       = "shutt";   // "shutt" - the address of this arduino board/ transmitter
 const byte masterNodeaddress[6] = "mastr";
 
-const int channel   = 115;
+const int channel    = 115;
 
-char message[10]    = "";
+char message[10]     = "CLOSED";
 String receivedData;
-String pkversion    = "1.0";
-bool shutterstatus  = true;
-bool Tx_sent        = false;
+String pkversion     = "2.0";
+String MovementState = "";
+bool shutterstatus   = true;
+bool Tx_sent         = false;
 
 void setup()
 {
@@ -65,7 +66,7 @@ void loop()
 
   if (radio.available())
   {
-    char text[32] = "";             // used to store what the master node sent e.g AZ hash SA hash
+    char text[32] = "";             // used to store what the master node sent e.g AZ , SA SS
 
 
     //error detection for radio always avaiable below
@@ -92,6 +93,7 @@ void loop()
     if (text[0] == 'C' && text[1] == 'S' && text[2] == '#') // close shutter command
     {
       //Serial.print ("received CS");
+      MovementState = "CLOSING";
       close_shutter();
 
     }
@@ -99,15 +101,13 @@ void loop()
 
     if (text[0] == 'O' && text[1] == 'S' && text[2] == '#') // open shutter command
     {
-
+      MovementState = "OPENING";
       open_shutter();
 
     }
 
     if (text[0] == 'S' && text[1] == 'S' && text[2] == '#') //  shutter status command
     {
-
-      shutter_status();
 
       TestforlostRadioConfiguration() ;
 
@@ -133,17 +133,18 @@ void loop()
 
       radio.startListening();                               // straight away after write to master, in case another message is sent
 
-      for ( int i = 0; i < 10; i++)                        // initialise the message array back to nulls
-      {
-        message[i] = 0;
-      }                                           //end for
-    }                                             //endif SS
+  
+    }   //endif SS
 
     text[0] = 0;   // set to null character
     text[1] = 0;
     text[2] = 0;
 
   } //endif radio available
+
+
+  CreateStatusMessage();             // this sets message to OPEN or OPENING, CLOSING or CLOSED
+
 
 } // end void loop
 
@@ -200,22 +201,26 @@ void TestforlostRadioConfiguration()   // this tests for the radio losing its co
 
 }
 
-void shutter_status()
+
+void CreateStatusMessage()
 {
 
+
   shutterstatus = digitalRead(shutter_status_pin);   // the status pin is set in shutter arduino true = closed
-  if (shutterstatus == true)
-  {
-    message [0] = 'C';
-    message [1] = 'L';
-    message [2] = 'O';
-    message [3] = 'S';
-    message [4] = 'E';
-    message [5] = 'D';
-    message [6] = 0;
-    digitalWrite (close_shutter_pin, HIGH);   // the status is 'closed', so set the close activation pin back to high
-  }
-  else
+
+if ( (MovementState=="OPENING" ) && (shutterstatus==true) )
+{
+    message [0] = 'o';
+    message [1] = 'p';
+    message [2] = 'e';
+    message [3] = 'n';
+    message [4] = 'i';
+    message [5] = 'n';
+    message [6] = 'g';
+    message [7] = 0;
+}
+ 
+if ( (MovementState=="OPENING" ) && (shutterstatus==false) )
   {
 
     message [0] = 'O';
@@ -225,8 +230,38 @@ void shutter_status()
     message [4] = 0;
     message [5] = 0;
     message [6] = 0;
+    message [7] = 0;
     digitalWrite (open_shutter_pin, HIGH); // the status is 'open', so set the open activation pin back to high
+  }
+
+if ( (MovementState=="CLOSING" ) && (shutterstatus==false) )
+
+ {
+    message [0] = 'c';
+    message [1] = 'l';
+    message [2] = 'o';
+    message [3] = 's';
+    message [4] = 'i';
+    message [5] = 'n';
+    message [6] = 'g';
+    message [7] = 0;
+    
+  }
+
+if ( (MovementState=="CLOSING" ) && (shutterstatus==true) )
+{
+    message [0] = 'C';
+    message [1] = 'L';
+    message [2] = 'O';
+    message [3] = 'S';
+    message [4] = 'E';
+    message [5] = 'D';
+    message [6] = 0;
+    message [7] = 0;
+    digitalWrite (close_shutter_pin, HIGH);   // the status is 'closed', so set the close activation pin back to high
   }
 
 
 }
+//
+//
