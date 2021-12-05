@@ -19,7 +19,7 @@ From the master radio
 todo - set up some serial prints to PC as tests of the bluetooth receipts.
 
 Test Plan:
-
+NB DON'T FORGET TO CONNECT UP THE BLUETOOTH DEVICE INTO THE BLUE COMMAND BOX. tHIS CODE USES HARDWARE SERIAL1, SO CONNECT ACCORDINGLY.
 NB the MCU will need to be connected to the shutter MCU, so best to test this routine by uploading the the COMMAND PROCESSOR box
 1 - Upload this code to the command processor
 2 - Send commands to this routine from a bluetooth MCU on the NUC
@@ -111,7 +111,7 @@ if (masterBluetooth.available() > 0 )
   if (receipt.indexOf("OS", 0) > -1)  
   {
     MovementState = "OPENING";
-    //todo remove below 
+    //todo remove 2 LINES  below 
     Serial.println("the command received was " + receipt);
     Serial.println("the status message is " + CreateStatusMessage() );
     open_shutter();
@@ -120,7 +120,7 @@ if (masterBluetooth.available() > 0 )
   if (receipt.indexOf("CS", 0) > -1)  
   {
     MovementState = "CLOSING";
-    //todo remove below 
+    //todo remove 2 LINES below 
     Serial.println("the command received was " + receipt);
     Serial.println("the status message is " + CreateStatusMessage() );
     close_shutter();
@@ -131,7 +131,7 @@ if (masterBluetooth.available() > 0 )
   
      String x = CreateStatusMessage();
   masterBluetooth.print(x + '#');
-  //todo remove below 
+  //todo remove  2 lines below 
     Serial.println("the command received was " + receipt);
     Serial.println("the status message is " + CreateStatusMessage() );
   }
