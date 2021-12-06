@@ -6,15 +6,17 @@ Send functions first:
 Via Bluetooth to the master radio:
 1 - response to Shutter status request OPEN, CLOSED, opening, closed
 
+
 To the Shutter MCU:
 1 - open the shutter
 2 - close the shutter
 2 - query the shutter status pin
 3 - probably should have emergency stop, but erse
+4 - reset
 
 Receive functions:
 From the master radio
-1 - Receive OS, CS, ES and SS -shutter status, Open Shutter, Close Shutter and emergency stop
+1 - Receive OS, CS, ES, reset and SS -shutter status, Open Shutter, Close Shutter and emergency stop
 
 todo - set up some serial prints to PC as tests of the bluetooth receipts.
 
@@ -44,6 +46,7 @@ NB the MCU will need to be connected to the shutter MCU, so best to test this ro
 */
 
 #include <Arduino.h>
+#include <avr/wdt.h>
 
 #define masterBluetooth Serial1     //note that hardware serial1 did not work on the test mega2560 connected to the dev machine
 
@@ -54,6 +57,7 @@ NB the MCU will need to be connected to the shutter MCU, so best to test this ro
 #define open_shutter_pin    30      // arduino  pin 46 corresponds with same pin number on the shutter arduino
 #define close_shutter_pin   34      // these 3 pins are used to ' lay off' the open close and status commands to the shutter arduino
 #define shutter_status_pin  48      // to prevent the shutter status command being blocked and causing radio timeout
+#define MCU_reset           13      // used to cause a reset of the Shutter MCU
 #define closed true                 // used with the shutterstatus variable
 #define open false
 
@@ -75,11 +79,11 @@ bool shutterstatus   = true;
 void setup()
 {
 
-  
+  pinMode(MCU_reset,              OUTPUT);
   pinMode(open_shutter_pin,       OUTPUT);
   pinMode(close_shutter_pin,      OUTPUT);
   pinMode(shutter_status_pin,     INPUT_PULLUP);  // input on this MCU and OUTPUT on the shutter MCU
-
+  digitalWrite(MCU_reset, HIGH);                  // the LOW state is used to reset the Shutter MCU
   digitalWrite(open_shutter_pin,  HIGH);          // open and close pins are used as active low, so initialise to high
   digitalWrite(close_shutter_pin, HIGH);
 
@@ -87,7 +91,7 @@ void setup()
   Serial.begin(9600);                            // used only for debug writes to a PC serial monitor
   masterBluetooth.begin(9600);                   // bluetooth comms between this module and the master radio
   
-  
+  wdt_enable(WDTO_4S);                 //Watchdog set to 4 seconds
 }  // end setup
 
 //========================================================================================================================================
@@ -103,11 +107,21 @@ void loop()
 if (masterBluetooth.available() > 0 )
 {
   String receipt = masterBluetooth.readStringUntil('#');  // string does not contain the #
-  //if receipt contains SS call the ss routine
+  // if receipt contains SS call the ss routine
   // if receipt conatins OS open the shutter
   // if receipt conatins CS close the shutter
+  // if receipt contains reset , reset the SHUTTER MCU
 
   // so easy....
+  if (receipt.indexOf("reset", 0) > -1)  
+  {
+    digitalWrite(MCU_reset, LOW);   // LOW state resets the shutter MCU
+    delay(1000);                    // dealy (not delay>???) to allow the Shutter mcu time to respond to the reset pin being LOW
+    //could put a while(1) loop here which would prevent the wdt being reset and cause this MCU to reset too.
+    while(1)     // leads to failure of WDT reset, thereby causing this cpu to reset.
+    {}
+  }
+
   if (receipt.indexOf("OS", 0) > -1)  
   {
     MovementState = "OPENING";
@@ -138,6 +152,7 @@ if (masterBluetooth.available() > 0 )
 
 }
   
+wdt_reset();                       //execute this command within 4 seconds to keep the timer from resetting
 
 } // end void loop
 
