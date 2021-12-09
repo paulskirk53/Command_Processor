@@ -72,7 +72,8 @@ String CreateStatusMessage();
 
 String receivedData;
 String pkversion     = "2.0";
-String MovementState = "";
+String MovementState = "CLOSING";     // THE CODE LOGIC is such that CLOSING here, sets the status message to closed. What if the MCUs reset when the shutter is open?
+// currently the code logic wouldn't be able to close the shutter, only open it, which would destry the chain drive.
 bool shutterstatus   = true;
 
 
@@ -103,9 +104,11 @@ void setup()
 
 void loop()
 {
-
+  //test line below worked
+//Serial.println("here"); 
 if (masterBluetooth.available() > 0 )
 {
+ 
   String receipt = masterBluetooth.readStringUntil('#');  // string does not contain the #
   // if receipt contains SS call the ss routine
   // if receipt conatins OS open the shutter
@@ -115,6 +118,7 @@ if (masterBluetooth.available() > 0 )
   // so easy....
   if (receipt.indexOf("reset", 0) > -1)  
   {
+    Serial.println("Command processor - Resetting ");
     digitalWrite(MCU_reset, LOW);   // LOW state resets the shutter MCU
     delay(1000);                    // dealy (not delay>???) to allow the Shutter mcu time to respond to the reset pin being LOW
     //could put a while(1) loop here which would prevent the wdt being reset and cause this MCU to reset too.
@@ -143,8 +147,8 @@ if (masterBluetooth.available() > 0 )
   if (receipt.indexOf("SS", 0) > -1)  
   {
   
-     String x = CreateStatusMessage();
-  masterBluetooth.print(x + '#');
+    String x = CreateStatusMessage();
+    masterBluetooth.print(x + '#');
   //todo remove  2 lines below 
     Serial.println("the command received was " + receipt);
     Serial.println("the status message is " + CreateStatusMessage() );
@@ -188,6 +192,7 @@ String CreateStatusMessage()
         statusMessage= "opening";
     }
   
+
   if ( (MovementState=="OPENING" ) && (shutterstatus==open) )    // false is open
     {
 
@@ -195,12 +200,14 @@ String CreateStatusMessage()
       digitalWrite (open_shutter_pin, HIGH); // the status is 'open', so set the open activation pin back to high
     }
 
+
   if ( (MovementState=="CLOSING" ) && (shutterstatus==open) )  // false is open
 
     {
       statusMessage = "closing";
       
     }
+
 
   if ( (MovementState=="CLOSING" ) && (shutterstatus==closed) )   // true is closed
     {
