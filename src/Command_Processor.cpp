@@ -73,7 +73,7 @@ String CreateStatusMessage();
 String receivedData;
 String pkversion     = "2.0";
 String MovementState = "CLOSING";     // THE CODE LOGIC is such that CLOSING here, sets the status message to closed. What if the MCUs reset when the shutter is open?
-// currently the code logic wouldn't be able to close the shutter, only open it, which would destry the chain drive.
+// currently the code logic wouldn't be able to close the shutter, only open it, which would destry, or even destroy, the chain drive.
 bool shutterstatus   = true;
 
 
@@ -99,13 +99,9 @@ void setup()
 //========================================================================================================================================
 
 
-
-
-
 void loop()
 {
-  //test line below worked
-//Serial.println("here"); 
+ 
 if (masterBluetooth.available() > 0 )
 {
  
