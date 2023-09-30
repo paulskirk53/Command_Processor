@@ -1,5 +1,6 @@
 //good bye to NRF Radio complications and hello again to Bluetooth
 // This module has the functions listed below:
+
 /*
 
 Send functions first:
@@ -11,36 +12,13 @@ To the Shutter MCU:
 1 - open the shutter
 2 - close the shutter
 2 - query the shutter status pin
-3 - probably should have emergency stop, but erse
+3 - emergency stop (via reset)
 4 - reset
 
 Receive functions:
 From the master radio
-1 - Receive OS, CS, ES, reset and SS -shutter status, Open Shutter, Close Shutter and emergency stop
+1 - Receive OS, CS, ES, reset and SS - Open Shutter, Close Shutter, emergency stop and shutter status.
 
-todo - set up some serial prints to PC as tests of the bluetooth receipts.
-
-Test Plan:
-NB DON'T FORGET TO CONNECT UP THE BLUETOOTH DEVICE INTO THE BLUE COMMAND BOX. tHIS CODE USES HARDWARE SERIAL1, SO CONNECT ACCORDINGLY.
-NB the MCU will need to be connected to the shutter MCU, so best to test this routine by uploading the the COMMAND PROCESSOR box
-1 - Upload this code to the command processor
-2 - Send commands to this routine from a bluetooth MCU on the NUC
-    for each function insert a serial.print to print out the command received and the status message - sermon on dev PC
-
-
-    the expected output is:
-    Initial state is shutter closed.
-    if the shutter is closed and OS is issued:
-      'the command received was OS'
-      'the status message is opening'
-
-    issue a number of SS commands whilst the shutter is opening and we should get returned 'opening', 'opening' etc followed by 'open' 'open' etc until a close command is issued
-    
-    if the shutter is open and CS is issued:
-      'the command received was CS'
-      'the status message is closing'
-
-  at any time, SS can be issued and the appropriate one of the four available status messages should be printed
 
 
 */
@@ -71,7 +49,7 @@ String CreateStatusMessage();
 
 
 String receivedData;
-String pkversion     = "2.0";
+String pkversion     = "3.0";
 String MovementState = "CLOSING";     // THE CODE LOGIC is such that CLOSING here, sets the status message to closed. What if the MCUs reset when the shutter is open?
 // currently the code logic wouldn't be able to close the shutter, only open it, which would destry, or even destroy, the chain drive.
 bool shutterstatus   = true;
@@ -109,16 +87,16 @@ if (masterBluetooth.available() > 0 )
   // if receipt contains SS call the shutter status routine
   // if receipt contains OS open the shutter
   // if receipt contains CS close the shutter
-  // if receipt contains reset , reset the SHUTTER MCU
+  // if receipt contains ES , reset the command processor and the SHUTTER MCU
 
   // so easy....
-  if (receipt.indexOf("reset", 0) > -1)  // note that ASCOM 'emergency stop' also sends "reset" and the shutter code
-  {                                      // resets the shutter MCU and closes the shutter (if open) on restart.
-    Serial.println("Command processor - Resetting ");
+  if (receipt.indexOf("ES", 0) > -1)     // ASCOM 'emergency stop' resets this mcu and also the
+  {                                      // shutter MCU. The resets cause the shutter to close if it is open
+    
     digitalWrite(MCU_reset, LOW);   // LOW state resets the shutter MCU
-    delay(1000);                    // dealy (not delay>???) to allow the Shutter mcu time to respond to the reset pin being LOW
-    //The while(1) loop here prevents the wdt being reset and causes this MCU to reset too.
-    while(1)     // leads to failure of WDT reset, thereby causing this cpu to reset.
+    delay(1000);                    // delay to allow the Shutter mcu time to respond to the reset pin being LOW
+                                    // The while(1) loop here times out the wdt and this mcu resets.
+    while(1)                        // Both CP and shutter mcus now reset
     {}
   }
 
@@ -145,9 +123,9 @@ if (masterBluetooth.available() > 0 )
   
     String x = CreateStatusMessage();
     masterBluetooth.print(x + '#');
-  //todo remove  2 lines below 
-    Serial.println("the command received was " + receipt);
-    Serial.println("the status message is " + CreateStatusMessage() );
+    //todo remove  2 lines below 
+    // Serial.println("the command received was " + receipt);
+    // Serial.println("the status message is " + CreateStatusMessage() );
   }
 
 }
