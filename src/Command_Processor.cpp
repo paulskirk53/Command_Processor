@@ -106,18 +106,18 @@ if (masterBluetooth.available() > 0 )
 {
  
   String receipt = masterBluetooth.readStringUntil('#');  // string does not contain the #
-  // if receipt contains SS call the ss routine
-  // if receipt conatins OS open the shutter
-  // if receipt conatins CS close the shutter
+  // if receipt contains SS call the shutter status routine
+  // if receipt contains OS open the shutter
+  // if receipt contains CS close the shutter
   // if receipt contains reset , reset the SHUTTER MCU
 
   // so easy....
-  if (receipt.indexOf("reset", 0) > -1)  
-  {
+  if (receipt.indexOf("reset", 0) > -1)  // note that ASCOM 'emergency stop' also sends "reset" and the shutter code
+  {                                      // resets the shutter MCU and closes the shutter (if open) on restart.
     Serial.println("Command processor - Resetting ");
     digitalWrite(MCU_reset, LOW);   // LOW state resets the shutter MCU
     delay(1000);                    // dealy (not delay>???) to allow the Shutter mcu time to respond to the reset pin being LOW
-    //could put a while(1) loop here which would prevent the wdt being reset and cause this MCU to reset too.
+    //The while(1) loop here prevents the wdt being reset and causes this MCU to reset too.
     while(1)     // leads to failure of WDT reset, thereby causing this cpu to reset.
     {}
   }
